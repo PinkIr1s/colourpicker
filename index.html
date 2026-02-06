@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    body {
+        height: 100dvh;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+    }
+
+    #output {
+        text-align: center;
+        font-family: monospace;
+        font-size: 15px;
+        font-weight: bold;
+    }
+</style>
+<title>Colour Picker</title>
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+    <input type="text" id="text_input" placeholder="#000000" value="#ffffff">
+    <input type="color" id="colour_picker" value="#ffffff">
+    <label id="output"></label>
+</body>
+<script>
+let hex_to_int = [];
+hex_to_int["a"] = 10;
+hex_to_int["b"] = 11;
+hex_to_int["c"] = 12;
+hex_to_int["d"] = 13;
+hex_to_int["e"] = 14;
+hex_to_int["f"] = 15;
+
+let text_input = document.getElementById("text_input");
+text_input.addEventListener("input", (event) => {
+    input_colour(text_input.value);
+});
+let output = document.getElementById("output");
+let colour_picker = document.getElementById("colour_picker");
+colour_picker.addEventListener("input", (event) => {
+    input_colour(colour_picker.value);
+});
+
+input_colour('#ffffff');
+
+function input_colour(input_text) {
+    document.body.style.background = input_text;
+    let hex = input_text.substr(1, 6);
+    let decimals = [];
+    let rgb = [];
+    for (let i = 0; i < 3; i++) {
+        let first_char = hex.charAt(i * 2);
+        let second_char = hex.charAt(i * 2 + 1);
+        if (first_char.match(/[a-f]/)) {
+            first_char = hex_to_int[first_char];
+        } else {
+            first_char = +first_char;
+        }
+        if (second_char.match(/[a-f]/)) {
+            second_char = hex_to_int[second_char];
+        } else {
+            second_char = +second_char;
+        }
+        let decimal = first_char * 16 + second_char;
+        rgb.push(decimal);
+        decimal = (decimal) / 255;
+        decimal = Math.round(decimal * 1000) / 1000;
+        
+        var stringified_decimal = ""+decimal;
+        if (!stringified_decimal.match(/[.]/)) {
+            stringified_decimal += ".0";
+        }
+        decimals.push(stringified_decimal);
+    }
+    if (decimals[0] * decimals[0] + decimals[1] * decimals[1] + decimals[2] * decimals[2] < 0.7617645263671875) {
+        output.style.color = "white";
+    } else {
+        output.style.color = "black";
+    }
+    let rgb_final = `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`;
+    let final = `vec3(${decimals[0]},${decimals[1]},${decimals[2]})`;
+    output.innerHTML = `${final}<br>${rgb_final}<br>${input_text}`;
+}
+</script>
+</html>
